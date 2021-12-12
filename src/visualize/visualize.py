@@ -293,7 +293,8 @@ def viz_dataset(dataset, params, folder):
                       "glob_rot": params["glob_rot"],
                       "glob": params["glob"],
                       "jointstype": params["jointstype"],
-                      "translation": params["translation"]}
+                      "translation": params["translation"],
+                      "vertstrans": params["vertstrans"]}
 
     output = visualization["output"]
     visualization["output_xyz"] = rot2xyz(output.to(device),
