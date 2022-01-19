@@ -24,13 +24,15 @@ if __name__ == '__main__':
     parameters = parser(checkpoint=False)
     parameters['num_frames'] = 55
     parameters['fps'] = 10
+    # parameters['pose_rep'] = 'xyz'
+    # parameters['pose_rep'] = 'rot6d'
     # get device
     device = parameters["device"]
 
     # get data
     DATA = get_dataset(name=parameters["dataset"])
     dataset = DATA(split="train", **parameters)
-    build_dataset_dist(dataset)
+    # build_dataset_dist(dataset)
     # add specific parameters from the dataset loading
     dataset.update_parameters(parameters)
 

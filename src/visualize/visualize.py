@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
-from .anim import plot_3d_motion_dico, load_anim
+from anim import plot_3d_motion_dico, load_anim
 
 
 def stack_images(real, real_gens, gen):

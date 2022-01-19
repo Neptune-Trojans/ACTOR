@@ -41,7 +41,7 @@ def do_epochs(model, datasets, parameters, optimizer, writer):
 if __name__ == '__main__':
     # parse options
     parameters = parser()
-    
+    # parameters['pose_rep'] = 'xyz'
     # logging tensorboard
     writer = SummaryWriter(log_dir=parameters["folder"])
 

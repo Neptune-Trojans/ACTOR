@@ -39,6 +39,7 @@ class CAE(nn.Module):
     def rot2xyz(self, x, mask, **kwargs):
         kargs = self.param2xyz.copy()
         kargs.update(kwargs)
+        # kargs['return_full_pose'] = True
         return self.rotation2xyz(x, mask, **kargs)
     
     def forward(self, batch):
