@@ -22,9 +22,11 @@ if __name__ == '__main__':
     # parse options
     # parameters = optutils.visualize_dataset_parser()
     parameters = parser(checkpoint=False)
-    parameters['num_frames'] = 55
+    parameters['num_frames'] = 120
     parameters['fps'] = 10
-    # parameters['pose_rep'] = 'xyz'
+    parameters['dataset'] = 'datagen'
+    parameters['pose_rep'] = 'xyz'
+    parameters["num_actions_to_sample"] = 1
     # parameters['pose_rep'] = 'rot6d'
     # get device
     device = parameters["device"]
