@@ -22,7 +22,7 @@ def train_or_test(model, optimizer, iterator, device, mode="train"):
 
             if mode == "train":
                 # update the gradients to zero
-                optimizer.zero_grad()
+                optimizer.optimizer.zero_grad()
 
             # forward pass
             batch = model(batch)
@@ -35,7 +35,7 @@ def train_or_test(model, optimizer, iterator, device, mode="train"):
                 # backward pass
                 mixed_loss.backward()
                 # update the weights
-                optimizer.step()
+                optimizer.optimizer.step()
     return dict_loss
 
 
