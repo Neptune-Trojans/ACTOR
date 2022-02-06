@@ -42,8 +42,8 @@ if __name__ == '__main__':
     # parse options
     parameters = parser()
     parameters['pose_rep'] = 'xyz'
-    parameters['dataset'] = 'datagen'
-    parameters["folder"] = 'exps/datagen'
+    # parameters['dataset'] = 'datagen'
+    # parameters["folder"] = 'exps/datagen'
     # logging tensorboard
     writer = SummaryWriter(log_dir=parameters["folder"])
 
