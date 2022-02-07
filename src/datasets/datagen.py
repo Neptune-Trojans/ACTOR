@@ -42,5 +42,5 @@ class Datagen(Dataset):
 
 
 datagen_coarse_action_enumerator = {
-    0: "walk"
+    0: "waving"
 }
