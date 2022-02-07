@@ -2,7 +2,7 @@ import torch
 from tqdm import tqdm
 
 
-def train_or_test(model, optimizer, iterator, device, mode="train"):
+def train_or_test(model, lr_scheduler, iterator, device, mode="train"):
     if mode == "train":
         model.train()
         grad_env = torch.enable_grad
@@ -22,7 +22,7 @@ def train_or_test(model, optimizer, iterator, device, mode="train"):
 
             if mode == "train":
                 # update the gradients to zero
-                optimizer.optimizer.zero_grad()
+                lr_scheduler.optimizer.zero_grad()
 
             # forward pass
             batch = model(batch)
@@ -35,12 +35,12 @@ def train_or_test(model, optimizer, iterator, device, mode="train"):
                 # backward pass
                 mixed_loss.backward()
                 # update the weights
-                optimizer.optimizer.step()
+                lr_scheduler.optimizer.step()
     return dict_loss
 
 
-def train(model, optimizer, iterator, device):
-    return train_or_test(model, optimizer, iterator, device, mode="train")
+def train(model, lr_scheduler, iterator, device):
+    return train_or_test(model, lr_scheduler, iterator, device, mode="train")
 
 
 def test(model, optimizer, iterator, device):

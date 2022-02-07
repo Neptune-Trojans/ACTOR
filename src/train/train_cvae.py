@@ -11,7 +11,7 @@ from src.parser.training import parser
 from src.utils.get_model_and_data import get_model_and_data
 
 
-def do_epochs(model, datasets, parameters, optimizer, writer):
+def do_epochs(model, datasets, parameters, lr_scheduler, writer):
     dataset = datasets["train"]
     train_iterator = DataLoader(dataset, batch_size=parameters["batch_size"],
                                 shuffle=True, num_workers=8, collate_fn=collate)
@@ -19,12 +19,13 @@ def do_epochs(model, datasets, parameters, optimizer, writer):
     logpath = os.path.join(parameters["folder"], "training.log")
     with open(logpath, "w") as logfile:
         for epoch in range(1, parameters["num_epochs"]+1):
-            dict_loss = train(model, optimizer, train_iterator, model.device)
+            dict_loss = train(model, lr_scheduler, train_iterator, model.device)
 
             for key in dict_loss.keys():
                 dict_loss[key] /= len(train_iterator)
                 writer.add_scalar(f"Loss/{key}", dict_loss[key], epoch)
 
+            writer.add_scalar('LR', lr_scheduler.get_last_lr()[0], epoch)
             epochlog = f"Epoch {epoch}, train losses: {dict_loss}"
             print(epochlog)
             print(epochlog, file=logfile)
@@ -54,7 +55,7 @@ if __name__ == '__main__':
 
     print('Total params: %.2fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0))
     print("Training model..")
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=300, gamma=0.3)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=300, gamma=0.5)
     do_epochs(model, datasets, parameters, scheduler, writer)
 
     writer.close()
