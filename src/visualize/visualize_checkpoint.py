@@ -14,9 +14,11 @@ plt.switch_backend('agg')
 def main():
     # parse options
     parameters, folder, checkpointname, epoch = parser()
-    # parameters['pose_rep'] = 'xyz'
+    parameters['pose_rep'] = 'xyz'
+    parameters['num_frames'] = 120
     model, datasets = get_model_and_data(parameters)
     dataset = datasets["train"]
+    parameters['decoder_test'] = "diffduration"
 
     print("Restore weights..")
     checkpointpath = os.path.join(folder, checkpointname)

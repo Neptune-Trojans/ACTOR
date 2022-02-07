@@ -69,9 +69,9 @@ def plot_3d_motion(motion, length, save_path, params, title="", interval=50):
         ax.set_yticklabels([])
         ax.set_zticklabels([])
 
-        ax.set_xlim(-0.7, 0.7)
-        ax.set_ylim(-0.7, 0.7)
-        ax.set_zlim(-0.7, 0.7)
+        ax.set_xlim(-1.7, 1.7)
+        ax.set_ylim(-1.7, 1.7)
+        ax.set_zlim(-1.7, 1.7)
 
         ax.view_init(azim=-90, elev=110)
         # ax.set_axis_off()
@@ -88,8 +88,8 @@ def plot_3d_motion(motion, length, save_path, params, title="", interval=50):
         motion = motion.numpy()
 
     # invert axis
-    motion[:, 1, :] = -motion[:, 1, :]
-    motion[:, 2, :] = -motion[:, 2, :]
+    # motion[:, 1, :] = -motion[:, 1, :]
+    # motion[:, 2, :] = -motion[:, 2, :]
 
     """
     Debug: to rotate the bodies
@@ -121,7 +121,7 @@ def plot_3d_motion(motion, length, save_path, params, title="", interval=50):
             ax.scatter(motion[:1, 0, index], motion[:1, 1, index],
                        motion[:1, 2, index], c="blue")
 
-    ax.set_title(title)
+    ax.set_title(title + f', frames: {length}')
 
     ani = FuncAnimation(fig, update, frames=length, interval=interval, repeat=False, init_func=init)
 
