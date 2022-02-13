@@ -1,6 +1,6 @@
 import importlib
 
-JOINTSTYPES = ["a2m", "a2mpl", "smpl", "vibe", "vertices"]
+JOINTSTYPES = ["a2m", "a2mpl", "smpl", "vibe", "vertices", 'datagen_skeleton']
 
 LOSSES = ["rc", "kl", "rcxyz"]  # not used: "hp", "mmd", "vel", "velxyz"
 
