@@ -13,7 +13,8 @@ from src.config import SMPL_MODEL_PATH, JOINT_REGRESSOR_TRAIN_EXTRA
 JOINTSTYPE_ROOT = {"a2m": 0, # action2motion
                    "smpl": 0,
                    "a2mpl": 0, # set(smpl, a2m)
-                   "vibe": 8}  # 0 is the 8 position: OP MidHip below
+                   "vibe": 8,
+                   'datagen_skeleton': 0}  # 0 is the 8 position: OP MidHip below
 
 JOINT_MAP = {
     'OP Nose': 24, 'OP Neck': 12, 'OP RShoulder': 17,
