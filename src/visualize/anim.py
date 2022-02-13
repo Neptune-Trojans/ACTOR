@@ -24,6 +24,23 @@ vibe_kinematic_chain = [[0, 12, 13, 14, 15],
                         [1, 5, 6, 7],
                         [1, 2, 3, 4]]
 
+datagen_kinematic_chain = [
+    [0, 1, 2, 3, 4],
+    [0, 5, 6, 7, 8],
+    [0, 9],
+    [0, 10],
+    [0, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
+    [17, 22, 23, 24, 25],
+    [17, 26, 27, 28, 29],
+    [17, 30, 31, 32, 33],
+    [30, 34, 35, 36],
+    [13, 37, 38, 39, 40, 41, 42, 43, 44],
+    [40, 45, 46, 47, 48],
+    [40, 49, 50, 51, 52],
+    [40, 53, 54, 55, 56],
+    [53, 57, 58, 59],
+    [13, 60, 61]]
+
 action2motion_kinematic_chain = vibe_kinematic_chain
 
 
@@ -69,9 +86,9 @@ def plot_3d_motion(motion, length, save_path, params, title="", interval=50):
         ax.set_yticklabels([])
         ax.set_zticklabels([])
 
-        ax.set_xlim(-1.7, 1.7)
-        ax.set_ylim(-1.7, 1.7)
-        ax.set_zlim(-1.7, 1.7)
+        ax.set_xlim(-0.3, 0.3)
+        ax.set_ylim(-0.4, 0.4)
+        ax.set_zlim(-0.3, 0.3)
 
         ax.view_init(azim=-90, elev=110)
         # ax.set_axis_off()
@@ -79,7 +96,8 @@ def plot_3d_motion(motion, length, save_path, params, title="", interval=50):
         ax.yaxis._axinfo["grid"]['color'] = (0.5, 0.5, 0.5, 0.25)
         ax.zaxis._axinfo["grid"]['color'] = (0.5, 0.5, 0.5, 0.25)
 
-    colors = ['red', 'magenta', 'black', 'green', 'blue']
+    colors = ['red', 'magenta', 'black', 'green', 'blue', 'cyan', 'magenta', 'DarkSeaGreen', 'azure', 'red',
+              'orange', 'plum', 'salmon', 'orchid', 'sienna']
 
     if pose_rep != "xyz":
         raise ValueError("It should already be xyz.")
@@ -104,6 +122,8 @@ def plot_3d_motion(motion, length, save_path, params, title="", interval=50):
         kinematic_tree = action2motion_kinematic_chain
     elif motion.shape[0] == 24:
         kinematic_tree = smpl_kinematic_chain
+    elif motion.shape[0] == 62:
+        kinematic_tree = datagen_kinematic_chain
     else:
         kinematic_tree = None
 
