@@ -1,14 +1,19 @@
 import torch
+from fairmotion.core.motion import Motion
+from fairmotion.ops.conversions import R2T
+
 import src.utils.rotation_conversions as geometry
 
 from .smpl import SMPL, JOINTSTYPE_ROOT
 from .get_model import JOINTSTYPES
+from ..datasets.default_skeleton import DefaultSkeleton
 
 
 class Rotation2xyz:
     def __init__(self, device):
         self.device = device
         self.smpl_model = SMPL().eval().to(device)
+        self._skl = DefaultSkeleton('src/datasets/skeleton.pkl')
 
     def __call__(self, x, mask, pose_rep, translation, glob,
                  jointstype, vertstrans, betas=None, beta=0,
@@ -52,17 +57,24 @@ class Rotation2xyz:
             global_orient = global_orient.repeat(len(rotations), 1, 1, 1)
         else:
             global_orient = rotations[:, 0]
-            rotations = rotations[:, 1:]
+            rotations1 = rotations[:, 1:]
 
-        if betas is None:
-            betas = torch.zeros([rotations.shape[0], self.smpl_model.num_betas],
-                                dtype=rotations.dtype, device=rotations.device)
-            betas[:, 1] = beta
-            # import ipdb; ipdb.set_trace()
-        out = self.smpl_model(body_pose=rotations, global_orient=global_orient, betas=betas)
+        if jointstype == 'datagen_skeleton':
+            rotations = rotations.clone().detach().cpu().numpy()
+            new_motion = Motion.from_matrix(R2T(rotations), self._skl.skeleton)
+            new_motion = new_motion.to_matrix(local=False)
+            joints = torch.tensor(new_motion[:, :, :3, 3], dtype=x.dtype, device=self.device, requires_grad=True)
 
-        # get the desirable joints
-        joints = out[jointstype]
+        else:
+            if betas is None:
+                betas = torch.zeros([rotations.shape[0], self.smpl_model.num_betas],
+                                    dtype=rotations.dtype, device=rotations.device)
+                betas[:, 1] = beta
+                # import ipdb; ipdb.set_trace()
+            out = self.smpl_model(body_pose=rotations1, global_orient=global_orient, betas=betas)
+
+            # get the desirable joints
+            joints = out[jointstype]
 
         x_xyz = torch.empty(nsamples, time, joints.shape[1], 3, device=x.device, dtype=x.dtype)
         x_xyz[~mask] = 0
