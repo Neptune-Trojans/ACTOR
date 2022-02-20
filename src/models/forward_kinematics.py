@@ -44,17 +44,17 @@ class Skeleton:
 
         positions_world = []
         rotations_world = []
-
+        print(self._offsets.device)
         expanded_offsets = self._offsets.expand(rotations.shape[0], rotations.shape[1],
                                                 self._offsets.shape[0], self._offsets.shape[1])
-
+        print(expanded_offsets.device)
         # Parallelize along the batch and time dimensions
         for i in range(self._offsets.shape[0]):
             if self._parents[i] == -1:
                 positions_world.append(root_positions)
                 rotations_world.append(rotations[:, :, 0])
             else:
-                print(rotations_world[self._parents[i]].device)
+                print(expanded_offsets.device)
                 print(expanded_offsets[:, :, i].device)
                 positions_world.append(quaternion_apply(rotations_world[self._parents[i]], expanded_offsets[:, :, i]) \
                                        + positions_world[self._parents[i]])
