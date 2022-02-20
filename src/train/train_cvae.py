@@ -42,7 +42,7 @@ def do_epochs(model, datasets, parameters, lr_scheduler, writer):
 if __name__ == '__main__':
     # parse options
     parameters = parser()
-    
+
     # logging tensorboard
     writer = SummaryWriter(log_dir=parameters["folder"])
 
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     optimizer = torch.optim.AdamW(model.parameters(), lr=parameters["lr"])
 
     print('Total params: %.2fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0))
-    print("Training model..")
+    print(f'Training model.. device: {parameters["device"]}')
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=300, gamma=0.5)
     do_epochs(model, datasets, parameters, scheduler, writer)
 
