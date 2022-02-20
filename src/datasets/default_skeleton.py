@@ -1,13 +1,8 @@
-# import os
 import pickle
 import numpy as np
 
 from fairmotion.core.motion import Motion
-# from fairmotion.data import bvh
-# from fairmotion.ops.motion import position_wrt_root
-#
-# from src.kinematic.kinematic_consts import datagen_kinematic_chain
-# from src.visualization.viz import plot_3d_motion
+from fairmotion.ops.conversions import T2Rp
 
 
 class DefaultSkeleton:
@@ -21,6 +16,12 @@ class DefaultSkeleton:
     @property
     def skeleton_joints_names(self):
         return [joint.name for joint in self._master_skeleton.joints]
+
+    @property
+    def joints_parent(self):
+        return np.array([-1] +
+                        [self.skeleton_joints_names.index(joint.parent_joint.name)
+                         for joint in self.skeleton.joints[1:]])
 
     @property
     def skeleton_joints_ordered(self):
@@ -55,22 +56,11 @@ class DefaultSkeleton:
 
         return new_motion
 
-
-# if __name__ == '__main__':
-#     motion_b = bvh.load('/bvh_motion_files/03_Coffee_Mug.bvh')
-#     # motion_b = bvh.load('/Users/paul.yudkin/dev/motion_synthesis/bvh_motion_files/DGS_X0026.34_Kick_front.bvh')
-#     # motion_b = bvh.load('/Users/paul.yudkin/dev/motion_synthesis/bvh_motion_files/13_Agree.bvh')
-#     d_skeleton = DefaultSkeleton('master_data/skeleton.pkl')
-#     if not d_skeleton.compare_joints_order(motion_b.skel, d_skeleton.skeleton):
-#         motion_b = d_skeleton.sort_bones_by_base_skeleton_order(motion_b)
-#
-#     # datagen_kinematic_chain = build_kinematic_chain(motion_a.skel)
-#     # print(datagen_kinematic_chain)
-#     matrix = position_wrt_root(motion_b)
-#
-#     # (frames, joints, xzy) matrix.shape
-#     matrix = np.moveaxis(matrix, 0, 2)
-#     output_path = '/output'
-#     file_name = '11_Take_a_break'
-#     animation_path = os.path.join(output_path, file_name + '.gif')
-#     plot_3d_motion(matrix, motion_b.num_frames(), animation_path, kinematic_tree=datagen_kinematic_chain)
+    @property
+    def skeleton_offsets(self):
+        xform_from_parent_joint = []
+        for joint in self.skeleton.joints:
+            R, p = T2Rp(joint.xform_from_parent_joint)
+            xform_from_parent_joint.append(p)
+        # xform_from_parent_joint = xform_from_parent_joint / np.linalg.norm(xform_from_parent_joint[1])
+        return np.array(xform_from_parent_joint)
