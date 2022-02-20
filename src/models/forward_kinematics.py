@@ -4,9 +4,8 @@ from pytorch3d.transforms import quaternion_multiply, quaternion_apply
 
 
 class Skeleton:
-    def __init__(self, offsets, parents, joints_left=None, joints_right=None, device='cpu'):
+    def __init__(self, offsets, parents, device, joints_left=None, joints_right=None):
         assert len(offsets) == len(parents)
-        print(device)
         self._offsets = torch.FloatTensor(offsets, device=device)
         self._parents = torch.tensor(parents, dtype=torch.int8, device=device)
         self._joints_left = joints_left
@@ -47,15 +46,12 @@ class Skeleton:
 
         expanded_offsets = self._offsets.expand(rotations.shape[0], rotations.shape[1],
                                                 self._offsets.shape[0], self._offsets.shape[1])
-        print(expanded_offsets.device)
         # Parallelize along the batch and time dimensions
         for i in range(self._offsets.shape[0]):
             if self._parents[i] == -1:
                 positions_world.append(root_positions)
                 rotations_world.append(rotations[:, :, 0])
             else:
-                print(expanded_offsets.device)
-                print(expanded_offsets[:, :, i].device)
                 positions_world.append(quaternion_apply(rotations_world[self._parents[i]], expanded_offsets[:, :, i]) \
                                        + positions_world[self._parents[i]])
                 if self._has_children[i]:
