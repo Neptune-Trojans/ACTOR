@@ -16,7 +16,7 @@ class Rotation2xyz:
         self.device = device
         self.smpl_model = SMPL().eval().to(device)
         self._skl = DefaultSkeleton('src/datasets/skeleton.pkl')
-        self.fk_skeleton = Skeleton(self._skl.skeleton_offsets, self._skl.joints_parent)
+        self.fk_skeleton = Skeleton(self._skl.skeleton_offsets, self._skl.joints_parent, device)
 
     def __call__(self, x, mask, pose_rep, translation, glob,
                  jointstype, vertstrans, betas=None, beta=0,
