@@ -6,7 +6,7 @@ from pytorch3d.transforms import quaternion_multiply, quaternion_apply
 class Skeleton:
     def __init__(self, offsets, parents, joints_left=None, joints_right=None, device='cpu'):
         assert len(offsets) == len(parents)
-
+        print(device)
         self._offsets = torch.FloatTensor(offsets, device=device)
         self._parents = torch.tensor(parents, dtype=torch.int8, device=device)
         self._joints_left = joints_left
@@ -44,7 +44,7 @@ class Skeleton:
 
         positions_world = []
         rotations_world = []
-        print(self._offsets.device)
+
         expanded_offsets = self._offsets.expand(rotations.shape[0], rotations.shape[1],
                                                 self._offsets.shape[0], self._offsets.shape[1])
         print(expanded_offsets.device)
