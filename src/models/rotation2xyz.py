@@ -1,8 +1,10 @@
 import torch
+from pytorch3d import transforms
 from fairmotion.core.motion import Motion
 from fairmotion.ops.conversions import R2T
 
 import src.utils.rotation_conversions as geometry
+from .forward_kinematics import Skeleton
 
 from .smpl import SMPL, JOINTSTYPE_ROOT
 from .get_model import JOINTSTYPES
@@ -14,6 +16,7 @@ class Rotation2xyz:
         self.device = device
         self.smpl_model = SMPL().eval().to(device)
         self._skl = DefaultSkeleton('src/datasets/skeleton.pkl')
+        self.fk_skeleton = Skeleton(self._skl.skeleton_offsets, self._skl.joints_parent)
 
     def __call__(self, x, mask, pose_rep, translation, glob,
                  jointstype, vertstrans, betas=None, beta=0,
@@ -60,10 +63,15 @@ class Rotation2xyz:
             rotations1 = rotations[:, 1:]
 
         if jointstype == 'datagen_skeleton':
-            rotations = rotations.clone().detach().cpu().numpy()
-            new_motion = Motion.from_matrix(R2T(rotations), self._skl.skeleton)
-            new_motion = new_motion.to_matrix(local=False)
-            joints = torch.tensor(new_motion[:, :, :3, 3], dtype=x.dtype, device=self.device, requires_grad=True)
+            # rotations = rotations.clone().detach().cpu().numpy()
+            # new_motion = Motion.from_matrix(R2T(rotations), self._skl.skeleton)
+            # new_motion = new_motion.to_matrix(local=False)
+            # joints = torch.tensor(new_motion[:, :, :3, 3], dtype=x.dtype, device=self.device, requires_grad=True)
+
+            Q = transforms.matrix_to_quaternion(rotations)
+            root_positions = torch.zeros((nsamples * time, 3), dtype=torch.float32)
+            pos_batch = self.fk_skeleton.forward_kinematics(Q[None], root_positions[None])
+            joints = torch.squeeze(pos_batch, 0)
 
         else:
             if betas is None:
