@@ -54,6 +54,8 @@ class Skeleton:
                 positions_world.append(root_positions)
                 rotations_world.append(rotations[:, :, 0])
             else:
+                print(rotations_world[self._parents[i]].device)
+                print(expanded_offsets[:, :, i].device)
                 positions_world.append(quaternion_apply(rotations_world[self._parents[i]], expanded_offsets[:, :, i]) \
                                        + positions_world[self._parents[i]])
                 if self._has_children[i]:
