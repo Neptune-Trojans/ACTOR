@@ -8,7 +8,7 @@ class Skeleton:
         assert len(offsets) == len(parents)
 
         self._offsets = torch.FloatTensor(offsets)
-        self._parents = np.array(parents)
+        self._parents = torch.tensor(parents, dtype=torch.int8)
         self._joints_left = joints_left
         self._joints_right = joints_right
         self._compute_metadata()
