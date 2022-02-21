@@ -51,9 +51,6 @@ def parser():
     if "folder" not in parameters:
         parameters["folder"] = construct_checkpointname(parameters, parameters["expname"])
 
-    os.makedirs(parameters["folder"], exist_ok=True)
-    save_args(parameters, folder=parameters["folder"])
-
     adding_cuda(parameters)
     
     return parameters

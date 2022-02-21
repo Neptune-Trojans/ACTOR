@@ -3,7 +3,10 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 
 from torch.utils.data import DataLoader
+
+from src.parser.tools import save_args
 from src.train.trainer import train
+from src.utils.application_path import ApplicationPath
 from src.utils.tensors import collate
 import src.utils.fixseed  # noqa
 
@@ -42,6 +45,9 @@ def do_epochs(model, datasets, parameters, lr_scheduler, writer):
 if __name__ == '__main__':
     # parse options
     parameters = parser()
+    app_name = 'train_cvae'
+    parameters["folder"] = ApplicationPath.get_application_path(app_name)
+    save_args(parameters, folder=parameters["folder"])
 
     # logging tensorboard
     writer = SummaryWriter(log_dir=parameters["folder"])
