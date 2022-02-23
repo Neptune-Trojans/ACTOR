@@ -69,7 +69,7 @@ class Rotation2xyz:
             # joints = torch.tensor(new_motion[:, :, :3, 3], dtype=x.dtype, device=self.device, requires_grad=True)
 
             Q = transforms.matrix_to_quaternion(rotations)
-            root_positions = torch.zeros((nsamples * time, 3), dtype=torch.float32, device=x.device)
+            root_positions = torch.zeros((Q.shape[0], 3), dtype=torch.float32, device=x.device)
             pos_batch = self.fk_skeleton.forward_kinematics(Q[None], root_positions[None])
             joints = torch.squeeze(pos_batch, 0)
 

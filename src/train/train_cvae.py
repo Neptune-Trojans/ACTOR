@@ -38,7 +38,7 @@ def do_epochs(model, datasets, parameters, lr_scheduler, writer):
                                                'checkpoint_{:04d}.pth.tar'.format(epoch))
                 print('Saving checkpoint {}'.format(checkpoint_path))
                 torch.save(model.state_dict(), checkpoint_path)
-
+            scheduler.step()
             writer.flush()
 
 
@@ -46,7 +46,8 @@ if __name__ == '__main__':
     # parse options
     parameters = parser()
     app_name = 'train_cvae'
-    parameters["folder"] = ApplicationPath.get_application_path(app_name)
+    parameters["folder"] = ApplicationPath.get_application_path(app_name, parameters["folder"])
+
     save_args(parameters, folder=parameters["folder"])
 
     # logging tensorboard
@@ -59,7 +60,7 @@ if __name__ == '__main__':
 
     print('Total params: %.2fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0))
     print(f'Training model.. device: {parameters["device"]}')
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=300, gamma=0.5)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=500, gamma=0.9)
     do_epochs(model, datasets, parameters, scheduler, writer)
 
     writer.close()
