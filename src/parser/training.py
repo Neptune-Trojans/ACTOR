@@ -13,7 +13,8 @@ def add_training_options(parser):
     group.add_argument("--num_epochs", type=int, required=True, help="number of epochs of training")
     group.add_argument("--lr", type=float, required=True, help="AdamW: learning rate")
     group.add_argument("--snapshot", type=int, required=True, help="frequency of saving model/viz")
-    
+    group.add_argument("--step_size", type=int, required=True, help="scheduler step size")
+    group.add_argument("--gamma", type=float, required=True, help="scheduler gamma")
 
 def parser():
     parser = ArgumentParser()

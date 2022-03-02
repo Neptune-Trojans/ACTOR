@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     print('Total params: %.2fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0))
     print(f'Training model.. device: {parameters["device"]}')
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=500, gamma=0.9)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=parameters['step_size'], gamma=parameters['gamma'])
     do_epochs(model, datasets, parameters, scheduler, writer)
 
     writer.close()
