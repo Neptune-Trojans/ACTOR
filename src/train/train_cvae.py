@@ -4,6 +4,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 from torch.utils.data import DataLoader
 
+from src.models.tools.eval_metrics import AccuracyCalculator
 from src.parser.tools import save_args
 from src.train.trainer import train
 from src.utils.application_path import ApplicationPath
@@ -19,6 +20,8 @@ def do_epochs(model, datasets, parameters, lr_scheduler, writer):
     train_iterator = DataLoader(dataset, batch_size=parameters["batch_size"],
                                 shuffle=True, num_workers=8, collate_fn=collate)
 
+    accuracy = AccuracyCalculator(512, parameters['num_frames'], parameters['device'], parameters['latent_dim'])
+
     logpath = os.path.join(parameters["folder"], "training.log")
     with open(logpath, "w") as logfile:
         for epoch in range(1, parameters["num_epochs"]+1):
@@ -27,6 +30,9 @@ def do_epochs(model, datasets, parameters, lr_scheduler, writer):
             for key in dict_loss.keys():
                 dict_loss[key] /= len(train_iterator)
                 writer.add_scalar(f"Loss/{key}", dict_loss[key], epoch)
+            for action_key, action_name in dataset.action_classes.items():
+                diversity = accuracy.compute_diversity(model, action_key)
+                writer.add_scalar(f'Accuracy/{action_name}', diversity, epoch)
 
             writer.add_scalar('LR', lr_scheduler.get_last_lr()[0], epoch)
             epochlog = f"Epoch {epoch}, train losses: {dict_loss}"
