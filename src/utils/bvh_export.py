@@ -12,8 +12,11 @@ def save_generated_motion(generation, mask, save_path, params):
     if not ((params['dataset'] == 'datagen') & (params['pose_rep'] == 'rot6d')):
         return
     skl = DefaultSkeleton('src/datasets/skeleton.pkl')
-    x_translations = generation[:, -1, :3]
-    x_rotations = generation[:, :-1]
+    if params['translation']:
+        x_translations = generation[:, -1, :3]
+        x_rotations = generation[:, :-1]
+    else:
+        x_rotations = generation
 
     x_rotations = x_rotations.permute(0, 3, 1, 2)
     nsamples, time, njoints, feats = x_rotations.shape
