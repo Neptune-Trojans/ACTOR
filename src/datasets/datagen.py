@@ -31,7 +31,7 @@ class Datagen(Dataset):
         self._action_to_label = {x: i for i, x in enumerate(keep_actions)}
         self._label_to_action = {i: x for i, x in enumerate(keep_actions)}
 
-        self._action_classes = datagen_coarse_action_enumerator
+        self.action_classes = datagen_coarse_action_enumerator
 
     def _load_joints3D(self, ind, frame_ix):
         return self._joints[ind][frame_ix]
