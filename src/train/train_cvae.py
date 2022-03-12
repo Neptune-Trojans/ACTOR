@@ -30,9 +30,11 @@ def do_epochs(model, datasets, parameters, lr_scheduler, writer):
             for key in dict_loss.keys():
                 dict_loss[key] /= len(train_iterator)
                 writer.add_scalar(f"Loss/{key}", dict_loss[key], epoch)
-            for action_key, action_name in dataset.action_classes.items():
-                diversity = accuracy.compute_diversity(model, action_key)
-                writer.add_scalar(f'Accuracy/{action_name}', diversity, epoch)
+
+            if epoch % 100 == 0:
+                for action_key, action_name in dataset.action_classes.items():
+                    diversity = accuracy.compute_diversity(model, action_key)
+                    writer.add_scalar(f'Accuracy/{action_name}', diversity, epoch)
 
             writer.add_scalar('LR', lr_scheduler.get_last_lr()[0], epoch)
             epochlog = f"Epoch {epoch}, train losses: {dict_loss}"
