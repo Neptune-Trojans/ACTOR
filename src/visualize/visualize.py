@@ -6,6 +6,7 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 from anim import plot_3d_motion_dico, load_anim
+from src.utils.bvh_export import save_generated_motion
 
 
 def stack_images(real, real_gens, gen):
@@ -201,9 +202,12 @@ def viz_epoch(model, dataset, epoch, params, folder, writer=None):
             z = reconstruction["z"].repeat((nspa, 1))
             lengths = gendurations.reshape(-1).to(model.device)
             mask = model.lengths_to_mask(lengths)
-            y = classes.repeat(nats).to(model.device)
+            y = classes.repeat(nspa).to(model.device)
             generation = {"z": z, "y": y, "mask": mask, "lengths": lengths}
             model.decoder(generation)
+
+            generation["output_xyz"] = model.rot2xyz(generation["output"], generation["mask"])
+
 
         elif decoder_test == "interpolate_action":
             assert nats == nspa
@@ -233,15 +237,17 @@ def viz_epoch(model, dataset, epoch, params, folder, writer=None):
         # Get xyz for the real ones
         visualization["output_xyz"] = model.rot2xyz(visualization["output"], visualization["mask"])
 
+    finalpath = os.path.join(folder, figname + ".gif")
+    tmp_path = os.path.join(folder, f"subfigures_{figname}")
+    os.makedirs(tmp_path, exist_ok=True)
+
+    save_generated_motion(generation['output'], generation['mask'], tmp_path, params)
+
     for key, val in generation.items():
         if len(generation[key].shape) == 1:
             generation[key] = val.reshape(nspa, nats)
         else:
             generation[key] = val.reshape(nspa, nats, *val.shape[1:])
-
-    finalpath = os.path.join(folder, figname + ".gif")
-    tmp_path = os.path.join(folder, f"subfigures_{figname}")
-    os.makedirs(tmp_path, exist_ok=True)
 
     print("Generate the videos..")
     frames = generate_by_video(visualization, reconstructions, generation,
