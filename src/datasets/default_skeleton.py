@@ -7,7 +7,7 @@ from fairmotion.ops.conversions import T2Rp
 
 class DefaultSkeleton:
     def __init__(self, skl_path):
-        self._master_skeleton = self._generate_master_skeleton(skl_path)
+        self._master_skeleton = self.load_master_skeleton(skl_path)
 
     @property
     def skeleton(self):
@@ -28,10 +28,15 @@ class DefaultSkeleton:
         return {joint_name: idx for idx, joint_name in enumerate(self.skeleton_joints_names)}
 
     @staticmethod
-    def _generate_master_skeleton(skl_path):
+    def load_master_skeleton(skl_path):
         with open(skl_path, 'rb') as f:
             skl = pickle.load(f)
         return skl
+
+    @staticmethod
+    def save_master_skeleton(skl, skl_path):
+        with open(skl_path, 'wb') as handle:
+            pickle.dump(skl, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     @staticmethod
     def compare_joints_order(skl_a, skl_b):

@@ -37,7 +37,7 @@ class Datagen(Dataset):
         return self._joints[ind][frame_ix]
 
     def _load_rotvec(self, ind, frame_ix):
-        pose = self._pose[ind][frame_ix].reshape(-1, 62, 3)
+        pose = self._pose[ind][frame_ix].reshape(-1, 78, 3)
         return pose
 
 
