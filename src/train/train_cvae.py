@@ -46,7 +46,7 @@ def do_epochs(model, datasets, parameters, lr_scheduler, writer):
                                                'checkpoint_{:04d}.pth.tar'.format(epoch))
                 print('Saving checkpoint {}'.format(checkpoint_path))
                 torch.save(model.state_dict(), checkpoint_path)
-            # scheduler.step()
+
             writer.flush()
 
 

@@ -36,6 +36,7 @@ def train_or_test(model, lr_scheduler, iterator, device, mode="train"):
                 mixed_loss.backward()
                 # update the weights
                 lr_scheduler.optimizer.step()
+                lr_scheduler.step()
     return dict_loss
 
 
