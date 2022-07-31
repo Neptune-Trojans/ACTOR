@@ -20,6 +20,7 @@ class Datagen(Dataset):
         self._joints = [x["joints3D"] for x in data]
 
         self._actions = [x["y"] for x in data]
+        self._joints_number = data[0]['rotations'].shape[1]
 
         total_num_actions = 1
         self.num_classes = total_num_actions
@@ -37,7 +38,7 @@ class Datagen(Dataset):
         return self._joints[ind][frame_ix]
 
     def _load_rotvec(self, ind, frame_ix):
-        pose = self._pose[ind][frame_ix].reshape(-1, 30, 3)
+        pose = self._pose[ind][frame_ix].reshape(-1, self._joints_number, 3)
         return pose
 
 
