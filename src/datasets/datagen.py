@@ -2,6 +2,7 @@ import pickle as pkl
 import numpy as np
 import os
 from .dataset import Dataset
+from ..datasets.default_skeleton import DefaultSkeleton
 
 
 class Datagen(Dataset):
@@ -11,17 +12,18 @@ class Datagen(Dataset):
         self.datapath = datapath
 
         super().__init__(**kargs)
-
+        skl_location = 'src/datasets/skeleton.pkl'
         pkldatafilepath = os.path.join(datapath, "skeleton_motion.pkl")
-        data = pkl.load(open(pkldatafilepath, "rb"))
-
+        dataset = pkl.load(open(pkldatafilepath, "rb"))
+        data = dataset['motion_data']
         self._pose = [x["rotations"] for x in data]
         self._num_frames_in_video = [p.shape[0] for p in self._pose]
         self._joints = [x["joints3D"] for x in data]
 
         self._actions = [x["y"] for x in data]
-        self._joints_number = data[0]['rotations'].shape[1]
-
+        self._joints_number = len(dataset['base_skeleton'].joints)
+        self.base_skeleton = dataset['base_skeleton']
+        DefaultSkeleton.save_master_skeleton(self.base_skeleton, skl_location)
         total_num_actions = 1
         self.num_classes = total_num_actions
 
