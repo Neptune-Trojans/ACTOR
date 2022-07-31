@@ -132,6 +132,7 @@ class Dataset(torch.utils.data.Dataset):
         return ret.float()
 
     def _get_item_data_index(self, data_index):
+        data_index = 0
         nframes = self._num_frames_in_video[data_index]
         shift_max = nframes - 1 - self.num_frames
         shift = random.randint(0, shift_max)
@@ -287,7 +288,7 @@ class Dataset(torch.utils.data.Dataset):
             num_seq_max = inf
 
         if self.split == 'train':
-            return min(len(self._train), num_seq_max)
+            return 512
         else:
             return min(len(self._test), num_seq_max)
 
