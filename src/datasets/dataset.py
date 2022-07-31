@@ -133,72 +133,76 @@ class Dataset(torch.utils.data.Dataset):
 
     def _get_item_data_index(self, data_index):
         nframes = self._num_frames_in_video[data_index]
+        shift_max = nframes - 1 - self.num_frames
+        shift = random.randint(0, shift_max)
+        idx = np.arange(shift, shift + self.num_frames, 1)
+        inp, target = self.get_pose_data(data_index, idx)
 
-        if self.num_frames == -1 and (self.max_len == -1 or nframes <= self.max_len):
-            frame_ix = np.arange(nframes)
-        else:
-            if self.num_frames == -2:
-                if self.min_len <= 0:
-                    raise ValueError("You should put a min_len > 0 for num_frames == -2 mode")
-                if self.max_len != -1:
-                    max_frame = min(nframes, self.max_len)
-                else:
-                    max_frame = nframes
-
-                num_frames = random.randint(self.min_len, max(max_frame, self.min_len))
-            else:
-                num_frames = self.num_frames if self.num_frames != -1 else self.max_len
-            # sampling goal: input: ----------- 11 nframes
-            #                       o--o--o--o- 4  ninputs
-            #
-            # step number is computed like that: [(11-1)/(4-1)] = 3
-            #                   [---][---][---][-
-            # So step = 3, and we take 0 to step*ninputs+1 with steps
-            #                   [o--][o--][o--][o-]
-            # then we can randomly shift the vector
-            #                   -[o--][o--][o--]o
-            # If there are too much frames required
-            if num_frames > nframes:
-                fair = False  # True
-                if fair:
-                    # distills redundancy everywhere
-                    choices = np.random.choice(range(nframes),
-                                               num_frames,
-                                               replace=True)
-                    frame_ix = sorted(choices)
-                else:
-                    # adding the last frame until done
-                    ntoadd = max(0, num_frames - nframes)
-                    lastframe = nframes - 1
-                    padding = lastframe * np.ones(ntoadd, dtype=int)
-                    frame_ix = np.concatenate((np.arange(0, nframes),
-                                               padding))
-
-            elif self.sampling in ["conseq", "random_conseq"]:
-                step_max = (nframes - 1) // (num_frames - 1)
-                if self.sampling == "conseq":
-                    if self.sampling_step == -1 or self.sampling_step * (num_frames - 1) >= nframes:
-                        step = step_max
-                    else:
-                        step = self.sampling_step
-                elif self.sampling == "random_conseq":
-                    step = random.randint(1, step_max)
-
-                lastone = step * (num_frames - 1)
-                shift_max = nframes - lastone - 1
-                shift = random.randint(0, max(0, shift_max - 1))
-                frame_ix = shift + np.arange(0, lastone + 1, step)
-
-            elif self.sampling == "random":
-                choices = np.random.choice(range(nframes),
-                                           num_frames,
-                                           replace=False)
-                frame_ix = sorted(choices)
-
-            else:
-                raise ValueError("Sampling not recognized.")
-
-        inp, target = self.get_pose_data(data_index, frame_ix)
+        # if self.num_frames == -1 and (self.max_len == -1 or nframes <= self.max_len):
+        #     frame_ix = np.arange(nframes)
+        # else:
+        #     if self.num_frames == -2:
+        #         if self.min_len <= 0:
+        #             raise ValueError("You should put a min_len > 0 for num_frames == -2 mode")
+        #         if self.max_len != -1:
+        #             max_frame = min(nframes, self.max_len)
+        #         else:
+        #             max_frame = nframes
+        #
+        #         num_frames = random.randint(self.min_len, max(max_frame, self.min_len))
+        #     else:
+        #         num_frames = self.num_frames if self.num_frames != -1 else self.max_len
+        #     # sampling goal: input: ----------- 11 nframes
+        #     #                       o--o--o--o- 4  ninputs
+        #     #
+        #     # step number is computed like that: [(11-1)/(4-1)] = 3
+        #     #                   [---][---][---][-
+        #     # So step = 3, and we take 0 to step*ninputs+1 with steps
+        #     #                   [o--][o--][o--][o-]
+        #     # then we can randomly shift the vector
+        #     #                   -[o--][o--][o--]o
+        #     # If there are too much frames required
+        #     if num_frames > nframes:
+        #         fair = False  # True
+        #         if fair:
+        #             # distills redundancy everywhere
+        #             choices = np.random.choice(range(nframes),
+        #                                        num_frames,
+        #                                        replace=True)
+        #             frame_ix = sorted(choices)
+        #         else:
+        #             # adding the last frame until done
+        #             ntoadd = max(0, num_frames - nframes)
+        #             lastframe = nframes - 1
+        #             padding = lastframe * np.ones(ntoadd, dtype=int)
+        #             frame_ix = np.concatenate((np.arange(0, nframes),
+        #                                        padding))
+        #
+        #     elif self.sampling in ["conseq", "random_conseq"]:
+        #         step_max = (nframes - 1) // (num_frames - 1)
+        #         if self.sampling == "conseq":
+        #             if self.sampling_step == -1 or self.sampling_step * (num_frames - 1) >= nframes:
+        #                 step = step_max
+        #             else:
+        #                 step = self.sampling_step
+        #         elif self.sampling == "random_conseq":
+        #             step = random.randint(1, step_max)
+        #
+        #         lastone = step * (num_frames - 1)
+        #         shift_max = nframes - lastone - 1
+        #         shift = random.randint(0, max(0, shift_max - 1))
+        #         frame_ix = shift + np.arange(0, lastone + 1, step)
+        #
+        #     elif self.sampling == "random":
+        #         choices = np.random.choice(range(nframes),
+        #                                    num_frames,
+        #                                    replace=False)
+        #         frame_ix = sorted(choices)
+        #
+        #     else:
+        #         raise ValueError("Sampling not recognized.")
+        #
+        # inp, target = self.get_pose_data(data_index, frame_ix)
         return inp, target
 
     def get_label_sample(self, label, n=1, return_labels=False, return_index=False):
