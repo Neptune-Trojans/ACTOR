@@ -27,7 +27,7 @@ class Datagen(Dataset):
         total_num_actions = 1
         self.num_classes = total_num_actions
 
-        self._train = list(range(len(self._pose)))
+        self._train = list(range(len(self._pose))) * 512
 
         keep_actions = np.arange(0, total_num_actions)
 
