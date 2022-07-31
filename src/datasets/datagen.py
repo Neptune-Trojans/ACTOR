@@ -35,6 +35,7 @@ class Datagen(Dataset):
         self._label_to_action = {i: x for i, x in enumerate(keep_actions)}
 
         self.action_classes = datagen_coarse_action_enumerator
+        print(f'datagen dataset was loaded')
 
     def _load_joints3D(self, ind, frame_ix):
         return self._joints[ind][frame_ix]
