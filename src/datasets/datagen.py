@@ -26,8 +26,8 @@ class Datagen(Dataset):
         DefaultSkeleton.save_master_skeleton(self.base_skeleton, skl_location)
         total_num_actions = 1
         self.num_classes = total_num_actions
-
-        self._train = list(range(len(self._pose))) * 512
+        self.batch_size = kargs['batch_size']
+        self._train = self._get_training_indexes(self.batch_size)
 
         keep_actions = np.arange(0, total_num_actions)
 
@@ -43,6 +43,17 @@ class Datagen(Dataset):
     def _load_rotvec(self, ind, frame_ix):
         pose = self._pose[ind][frame_ix].reshape(-1, self._joints_number, 3)
         return pose
+
+    def _get_training_indexes(self, desired_size):
+        indexes = list(range(len(self._pose)))
+        if len(indexes) < desired_size:
+            indexes = indexes * (desired_size // len(indexes)) + indexes[:(desired_size % len(indexes))]
+
+        return indexes
+
+
+
+
 
 
 datagen_coarse_action_enumerator = {
