@@ -16,6 +16,7 @@ class Datagen(Dataset):
         pkldatafilepath = os.path.join(datapath, "skeleton_motion.pkl")
         dataset = pkl.load(open(pkldatafilepath, "rb"))
         data = dataset['motion_data']
+        self._log_dataset_metadata(dataset)
         self._pose = [x["rotations"] for x in data]
         self._num_frames_in_video = [p.shape[0] for p in self._pose]
         self._joints = [x["joints3D"] for x in data]
@@ -35,7 +36,6 @@ class Datagen(Dataset):
         self._label_to_action = {i: x for i, x in enumerate(keep_actions)}
 
         self.action_classes = datagen_coarse_action_enumerator
-        print(f'datagen dataset was loaded')
 
     def _load_joints3D(self, ind, frame_ix):
         return self._joints[ind][frame_ix]
@@ -45,11 +45,19 @@ class Datagen(Dataset):
         return pose
 
     def _get_training_indexes(self, desired_size):
+
         indexes = list(range(len(self._pose)))
         if len(indexes) < desired_size:
+            print(f'increasing virtually dataset from {len(indexes)} to {desired_size} samples')
             indexes = indexes * (desired_size // len(indexes)) + indexes[:(desired_size % len(indexes))]
 
         return indexes
+
+    def _log_dataset_metadata(self, dataset):
+        date = dataset['date']
+        joints = len(dataset['base_skeleton'].joints)
+        motions_count = len(dataset['motion_data'])
+        print(f'loading datagen dataset, {motions_count} motions, {joints} joints, created on {date}')
 
 
 
