@@ -8,13 +8,12 @@ from ..datasets.default_skeleton import DefaultSkeleton
 class Datagen(Dataset):
     dataname = "datagen"
 
-    def __init__(self, datapath="data/Datagen", **kargs):
+    def __init__(self, datapath, **kargs):
         self.datapath = datapath
 
         super().__init__(**kargs)
         skl_location = 'src/datasets/skeleton.pkl'
-        pkldatafilepath = os.path.join(datapath, "skeleton_motion.pkl")
-        dataset = pkl.load(open(pkldatafilepath, "rb"))
+        dataset = pkl.load(open(datapath, "rb"))
         data = dataset['motion_data']
         self._log_dataset_metadata(dataset)
         self._pose = [x["rotations"] for x in data]

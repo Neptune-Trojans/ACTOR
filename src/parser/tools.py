@@ -1,9 +1,15 @@
 import os
+import shutil
+
 import yaml
 
 
 def save_args(opt, folder):
     os.makedirs(folder, exist_ok=True)
+    dataset_path = opt['datapath']
+    dataset_file_name = os.path.basename(dataset_path)
+    dst = os.path.join(folder, dataset_file_name)
+    shutil.copyfile(dataset_path, dst)
     
     # Save as yaml
     optpath = os.path.join(folder, "opt.yaml")
