@@ -51,6 +51,9 @@ def add_visualize_options(parser):
     
     group.add_argument("--fact_latent", type=int, default=1,
                        help="factor for max latent space")
+    group.add_argument("--datapath", help="Path of the data")
+    group.add_argument("--num_frames", required=True, type=int,
+                       help="number of frames or -1 => whole, -2 => random between min_len and total")
 
 
 def parser(checkpoint=True):

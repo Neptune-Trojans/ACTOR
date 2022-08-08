@@ -24,22 +24,15 @@ vibe_kinematic_chain = [[0, 12, 13, 14, 15],
                         [1, 5, 6, 7],
                         [1, 2, 3, 4]]
 
-datagen_kinematic_chain = [
-    [0, 1, 2, 3, 4],
-    [0, 5, 6, 7, 8],
-    [0, 9],
-    [0, 10],
-    [0, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
-    [17, 22, 23, 24, 25],
-    [17, 26, 27, 28, 29],
-    [17, 30, 31, 32, 33],
-    [30, 34, 35, 36],
-    [13, 37, 38, 39, 40, 41, 42, 43, 44],
-    [40, 45, 46, 47, 48],
-    [40, 49, 50, 51, 52],
-    [40, 53, 54, 55, 56],
-    [53, 57, 58, 59],
-    [13, 60, 61]]
+datagen_kinematic_chain =[
+     [0, 1, 2, 3, 4, 5],
+     [0, 6, 7, 8, 9, 10],
+     [0, 11, 12, 13, 14, 15, 16, 17],
+     [13, 18, 19, 20, 21],
+     [13, 22, 23, 24, 25],
+     [0, 26, 27],
+     [0, 28, 29]
+]
 
 action2motion_kinematic_chain = vibe_kinematic_chain
 
@@ -73,7 +66,7 @@ def plot_3d_motion(motion, length, save_path, params, title="", interval=50):
     from mpl_toolkits.mplot3d.art3d import Poly3DCollection  # noqa: F401
     from matplotlib.animation import FuncAnimation, writers  # noqa: F401
     # import mpl_toolkits.mplot3d.axes3d as p3
-    matplotlib.use('Agg')
+    # matplotlib.use('Agg')
     pose_rep = params["pose_rep"]
 
     fig = plt.figure(figsize=[2.6, 2.8])
@@ -122,7 +115,7 @@ def plot_3d_motion(motion, length, save_path, params, title="", interval=50):
         kinematic_tree = action2motion_kinematic_chain
     elif motion.shape[0] == 24:
         kinematic_tree = smpl_kinematic_chain
-    elif motion.shape[0] == 62:
+    elif motion.shape[0] == 30:
         kinematic_tree = datagen_kinematic_chain
     else:
         kinematic_tree = None
